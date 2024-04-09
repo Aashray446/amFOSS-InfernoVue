@@ -1,10 +1,74 @@
-import React from 'react';
+import React, { FormEvent, SyntheticEvent } from 'react';
 import { Link } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
 import AuthLayout from '../../layout/AuthLayout';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import Loader from '../../common/Loader';
+import { toast } from 'react-toastify';
+
+const LOGIN = gql`
+mutation Login($username: String!, $password: String!) {
+  login(input: {
+    identifier: $username,
+    password: $password
+  }) {
+    jwt
+    user {
+      id
+      username
+      email
+      role {
+        id
+        name
+        description
+        type
+      }
+    }
+  }
+}
+`;
+interface LoginData {
+  login: {
+    jwt: string;
+    user: {
+      id: string;
+      username: string;
+      email: string;
+      role: {
+        id: string;
+        name: string;
+        description: string;
+        type: string;
+      };
+    };
+  };
+}
+
+interface loginPayload{
+  username: string;
+  password: string;
+}
 
 const SignIn: React.FC = () => {
+
+  const [mutateFunction ,{loading}] = useMutation(LOGIN);
+  const [loginPayload, setLoginPayload] = React.useState<loginPayload>({ username: '', password: '' });
+
+  if(loading) return <Loader></Loader>
+  
+  const login = (e:FormEvent<HTMLInputElement> )=>{
+    e.preventDefault();
+    if(loginPayload.username === '' || loginPayload.password === ''){
+      return;
+    }
+    console.log(loginPayload);
+    mutateFunction({variables: {
+      username: loginPayload.username,
+      password: loginPayload.password
+    }}).then(data => console.log(data)).catch(err => toast(err.message));
+  }
+
   return (
     <AuthLayout>
 
@@ -162,6 +226,7 @@ const SignIn: React.FC = () => {
                     <input
                       type="email"
                       placeholder="Enter your email"
+                      onChange={(e) => setLoginPayload({ ...loginPayload, username: e.target.value })}
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
 
@@ -192,6 +257,7 @@ const SignIn: React.FC = () => {
                   <div className="relative">
                     <input
                       type="password"
+                      onChange={(e) => setLoginPayload({ ...loginPayload, password: e.target.value })}
                       placeholder="6+ Characters, 1 Capital letter"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     />
@@ -222,13 +288,14 @@ const SignIn: React.FC = () => {
 
                 <div className="mb-5">
                   <input
+                    onClick={(e)=>login(e)}
                     type="submit"
                     value="Sign In"
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
                   />
                 </div>
 
-                <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
+                {/* <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
                   <span>
                     <svg
                       width="20"
@@ -263,7 +330,7 @@ const SignIn: React.FC = () => {
                     </svg>
                   </span>
                   Sign in with Google
-                </button>
+                </button> */}
 
                 <div className="mt-6 text-center">
                   <p>

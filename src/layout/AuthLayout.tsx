@@ -1,4 +1,7 @@
 import React, {  ReactNode } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const AuthLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
 
@@ -7,6 +10,7 @@ const AuthLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
     <div className="w-full md:w-auto sm-w-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       {children}
     </div>
+    <ToastContainer position='top-center'  />
   </main>
   
   );
