@@ -15,10 +15,14 @@ import Settings from './pages/Settings';
 import Tables from './pages/Tables';
 import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
+import { ProtectedRoute } from './services/protectedRoute';
+import { AuthProvider } from "./hooks/useAuth";
+
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
+  
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,15 +35,15 @@ function App() {
   return loading ? (
     <Loader />
   ) : (
-    <>
+    <AuthProvider>
       <Routes>
         <Route
           index
           element={
-            <>
+            <ProtectedRoute>
               <PageTitle title="eCommerce Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template" />
               <ECommerce />
-            </>
+            </ProtectedRoute>
           }
         />
         <Route
@@ -142,7 +146,7 @@ function App() {
           }
         />
       </Routes>
-    </>
+    </AuthProvider>
   );
 }
 
