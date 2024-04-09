@@ -17,6 +17,8 @@ import Alerts from './pages/UiElements/Alerts';
 import Buttons from './pages/UiElements/Buttons';
 import { ProtectedRoute } from './services/protectedRoute';
 import { AuthProvider } from "./hooks/useAuth";
+import ApolloProviderWrapper from './services/apolloProvider';
+
 
 
 function App() {
@@ -35,6 +37,7 @@ function App() {
   return loading ? (
     <Loader />
   ) : (
+    <ApolloProviderWrapper>
     <AuthProvider>
       <Routes>
         <Route
@@ -147,6 +150,7 @@ function App() {
         />
       </Routes>
     </AuthProvider>
+    </ApolloProviderWrapper>
   );
 }
 
